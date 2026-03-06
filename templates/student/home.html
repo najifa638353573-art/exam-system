@@ -1,0 +1,12 @@
+{% extends "student/base.html" %}
+{% block content %}
+  <h2>Welcome</h2>
+  <p class="muted">রেজিস্ট্রেশন করলে আগে Application এ যাবে (Pending) → Admin approve করলে Student account তৈরি হবে।</p>
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <a class="btn btn2" href="{{ url_for('register') }}">Register</a>
+      <a class="btn" href="{{ url_for('courses') }}">Courses</a>
+      <a class="btn" href="{{ url_for('subjects_page') }}">Subjects</a>
+    <a class="btn" href="{{ url_for('login') }}">Login</a>
+    <a class="btn" href="{{ url_for('apply') }}">Apply (No Registration)</a>
+  </div>
+{% endblock %}

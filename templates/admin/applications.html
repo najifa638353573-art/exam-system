@@ -1,0 +1,48 @@
+{% extends "admin/base.html" %}
+{% block content %}
+  <h2>Applications</h2>
+  <p class="muted">Registration/Apply সবগুলো এখানে আসবে। Approved দিলে Student account create হবে।</p>
+
+  {% if apps %}
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone / WhatsApp</th>
+          <th>Desired Subject</th>
+          <th>Info</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in apps %}
+          <tr>
+            <td><b>{{ a.name }}</b><div class="muted">{{ a.created_at }}</div></td>
+            <td class="muted">Phone: {{ a.phone }}<br/>WA: {{ a.whatsapp or '-' }}</td>
+            <td class="muted">{{ a.subject_name or '-' }}</td>
+            <td class="muted">
+              Location: {{ a.location or '-' }}<br/>
+              Current: {{ a.current_status or '-' }}<br/>
+              Edu: {{ a.education_level or '-' }}<br/>
+              Note: {{ a.note or '-' }}
+            </td>
+            <td><b>{{ a.status }}</b></td>
+            <td>
+              <form method="post" action="{{ url_for('admin_application_status', app_id=a.id) }}">
+                <select name="status">
+                  <option value="pending" {% if a.status=='pending' %}selected{% endif %}>pending</option>
+                  <option value="approved" {% if a.status=='approved' %}selected{% endif %}>approved</option>
+                  <option value="rejected" {% if a.status=='rejected' %}selected{% endif %}>rejected</option>
+                </select>
+                <button class="btn btn2" type="submit" style="margin-top:8px;">Update</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">No applications.</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{{ site_name }} — Courses</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <a class="brand" href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='logo.png') }}" alt="logo"/>{{ site_name }}</a>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <a class="btn" href="{{ url_for('subjects_page') }}">Subjects</a>
+        {% if session.get('user_id') %}
+          <a class="btn" href="{{ url_for('dashboard') }}">Dashboard</a>
+        {% else %}
+          <a class="btn" href="{{ url_for('login') }}">Login</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <h2>Courses</h2>
+    <form method="get" style="display:flex; gap:10px; flex-wrap:wrap; align-items:end; margin:10px 0;">
+      <div>
+        <label>Filter by Subject</label>
+        <select name="subject">
+          <option value="">All</option>
+          {% for s in subjects %}
+            <option value="{{ s.id }}" {% if request.args.get('subject')|int == s.id %}selected{% endif %}>{{ s.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button class="btn btn2" type="submit">Filter</button>
+    </form>
+
+    <div class="grid">
+      {% for c in courses %}
+        <div class="card">
+          {% if c.image_filename %}
+            <img src="{{ url_for('static', filename='uploads/' + c.image_filename) }}" alt="course" style="width:100%; height:160px; object-fit:cover; border-radius:14px;"/>
+          {% endif %}
+          <h3>{{ c.title }}</h3>
+          <div class="muted">{{ c.subject_name or "-" }}</div>
+          <p class="muted">{{ c.description or "" }}</p>
+          <a class="btn btn2" href="{{ url_for('course_detail', course_id=c.id) }}">View Details</a>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h3 style="margin-top:0;">Contact</h3>
+      <div class="footerBtns">
+  <a class="btn" href="{{ facebook_url }}" target="_blank">Facebook</a>
+  <a class="btn btn4" href="https://wa.me/8801609450034" target="_blank">WhatsApp</a>
+  <a class="btn" href="{{ telegram_url }}" target="_blank">Telegram</a>
+</div>
+    </div>
+  </div>
+</body>
+</html>

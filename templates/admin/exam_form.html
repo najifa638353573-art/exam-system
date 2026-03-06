@@ -1,0 +1,64 @@
+{% extends "admin/base.html" %}
+{% block head %}
+<script>
+  function filterBatches(){
+    const sid = document.getElementById('subject_id').value;
+    const sel = document.getElementById('batch_id');
+    const opts = sel.querySelectorAll('option[data-subject]');
+    opts.forEach(o=>{
+      const ok = (o.getAttribute('data-subject') === sid) || (o.value === "ALL");
+      o.style.display = ok ? 'block' : 'none';
+    });
+  }
+  window.addEventListener('load', filterBatches);
+</script>
+{% endblock %}
+{% block content %}
+  <h2>{% if mode=='add' %}Add Exam{% else %}Edit Exam{% endif %}</h2>
+  <form method="post">
+    <label>Subject</label>
+    <select name="subject_id" id="subject_id" onchange="filterBatches()" required>
+      {% for s in subjects %}
+        <option value="{{ s.id }}" {% if exam and exam.subject_id==s.id %}selected{% endif %}>{{ s.name }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Batch (optional)</label>
+    <select name="batch_id" id="batch_id">
+      <option value="ALL">ALL (Any Batch)</option>
+      {% for b in batches %}
+        <option value="{{ b.id }}"
+                data-subject="{{ b.subject_id }}"
+                {% if exam and exam.batch_id==b.id %}selected{% endif %}>
+          {{ b.subject_name }} — {{ b.name }}
+        </option>
+      {% endfor %}
+    </select>
+    <div class="muted" style="margin-top:6px;">Batch select করলে exam শুধু সেই batch এর ছাত্ররা দেখবে।</div>
+
+    <label>Exam Title</label>
+    <input name="title" required value="{{ exam.title if exam else '' }}" />
+
+    <label>Panel/Label (e.g., SSC)</label>
+    <input name="label" value="{{ exam.label if exam else 'SSC' }}" />
+
+    <label>Visibility</label>
+<select name="visibility">
+  {% set vis = (exam.visibility if exam and exam.visibility else 'approved') %}
+  <option value="registered" {% if vis=='registered' %}selected{% endif %}>Registered Users</option>
+  <option value="approved" {% if vis=='approved' %}selected{% endif %}>Approved Users Only</option>
+</select>
+
+<label>Duration (minutes)</label>
+
+    <input name="duration_minutes" type="number" min="1" value="{{ exam.duration_minutes if exam else 20 }}" />
+
+    <label>
+      <input type="checkbox" name="is_active" {% if exam and exam.is_active %}checked{% elif not exam %}checked{% endif %}/>
+      Active
+    </label>
+
+    <button class="btn btn2" type="submit" style="margin-top:12px;">Save</button>
+    <a class="btn" href="{{ url_for('admin_exams') }}">Back</a>
+  </form>
+{% endblock %}

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ site_name }} — Admin{% if title %} — {{ title }}{% endif %}</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f6f7fb; }
+    .layout { display:flex; min-height: 100vh; }
+    .side { width: 280px; background:#111827; color:#fff; padding: 16px; }
+    .brand { display:flex; align-items:center; gap:10px; margin-bottom: 16px; }
+    .brand img { width: 40px; height: 40px; object-fit: contain; border-radius: 10px; background:#fff; padding:4px; }
+    .brandTitle { font-size: 18px; font-weight: 900; }
+    .nav a { display:block; padding: 10px 12px; border-radius: 10px; color:#e5e7eb; text-decoration:none; margin-bottom:6px; }
+    .nav a:hover { background:#0b1220; color:#fff; }
+    .nav .muted { color:#94a3b8; font-size: 12px; margin: 10px 0 6px; }
+    .main { flex:1; padding: 18px; }
+    .wrap { max-width: 1200px; margin: 0 auto; }
+    .card { background: white; border-radius: 14px; padding: 18px; box-shadow: 0 8px 22px rgba(0,0,0,.06); }
+    .muted { color:#6b7280; font-size: 14px; }
+    a.btn, button.btn { display:inline-block; padding: 10px 14px; border-radius: 10px; border: 0; text-decoration:none; background:#111827; color:#fff; cursor:pointer; }
+    .btn2 { background:#2563eb; }
+    .btn3 { background:#dc2626; }
+    .btn4 { background:#059669; }
+    .flash { margin: 10px 0; padding: 10px 12px; border-radius: 10px; }
+    .success { background:#ecfdf5; border:1px solid #10b98133; }
+    .danger { background:#fef2f2; border:1px solid #ef444433; }
+    .warning { background:#fffbeb; border:1px solid #f59e0b33; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { text-align:left; padding:10px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+    textarea, input, select { width:100%; padding:10px; border-radius:10px; border:1px solid #e5e7eb; box-sizing: border-box;}
+    label { font-weight: 700; display:block; margin: 10px 0 6px; }
+    .pill { display:inline-block; padding: 4px 10px; border-radius: 999px; background:#eef2ff; color:#3730a3; font-weight:700; font-size:12px; }
+    .row { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 900px) { .side { display:none; } .main{ padding: 12px; } }
+    @media (max-width: 720px) { .row { grid-template-columns: 1fr; } }
+    .q { margin: 14px 0; padding: 14px; border: 1px solid #e5e7eb; border-radius: 12px; background:#fff; }
+    .ok { background:#ecfdf5; border-color:#10b98155; }
+    .bad { background:#fef2f2; border-color:#ef444455; }
+    .tag { font-weight:800; font-size:12px; padding:4px 8px; border-radius:999px; display:inline-block; }
+    .tagOk { background:#10b98122; color:#065f46; }
+    .tagBad { background:#ef444422; color:#7f1d1d; }
+    .tagPend { background:#f59e0b22; color:#7c2d12; }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <div class="layout">
+    <aside class="side">
+      <div class="brand">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="logo" onerror="this.style.display='none'">
+        <div>
+          <div class="brandTitle">{{ site_name }}</div>
+          <div class="muted" style="color:#94a3b8;">Admin Panel</div>
+        </div>
+      </div>
+
+      <div class="nav">
+        <div class="muted">Manage</div>
+        <a href="{{ url_for('admin_subjects') }}">Subjects</a>
+        <a href="{{ url_for('admin_batches') }}">Batches</a>
+        <a href="{{ url_for('admin_exams') }}">Exams</a>
+        <a href="{{ url_for('admin_students') }}">Students</a>
+        <a href="{{ url_for('admin_applications') }}">Applications</a>
+        <a href="{{ url_for('admin_employees') }}">Employees</a>
+        <a href="{{ url_for('manage_courses') }}">Courses</a>
+        <a href="{{ url_for('admin_attempts') }}">Attempts</a>
+
+        <div class="muted" style="margin-top:12px;">Review</div>
+        <a href="{{ url_for('admin_written_queue') }}">Written Queue</a>
+
+        <div class="muted" style="margin-top:12px;">Settings</div>
+        <a href="{{ url_for('admin_status_options') }}">Student Status Options</a>
+        <a href="{{ url_for('admin_retake') }}">Grant Retake</a>
+
+        <div class="muted" style="margin-top:12px;">Export</div>
+        <a href="{{ url_for('export_attempts_csv') }}">Attempts CSV</a>
+        <a href="{{ url_for('export_students_csv') }}">Students CSV</a>
+
+        <div class="muted" style="margin-top:12px;">Account</div>
+        <a href="{{ url_for('admin_logout') }}">Logout</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="wrap">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for cat, msg in messages %}
+              <div class="flash {{ cat }}">{{ msg }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="card">
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

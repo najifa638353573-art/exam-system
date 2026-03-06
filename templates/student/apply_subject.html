@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{{ site_name }} — Apply</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <a class="brand" href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='logo.png') }}" alt="logo"/>{{ site_name }}</a>
+      <div style="display:flex; gap:8px;">
+        <a class="btn" href="{{ url_for('subjects_page') }}">Subjects</a>
+        <a class="btn" href="{{ url_for('courses') }}">Courses</a>
+      </div>
+    </div>
+
+    <h2>Apply — {{ subject.name }}</h2>
+    <p class="muted">Apply করার পরে WhatsApp এ নক দিলে দ্রুত confirm করা যাবে: <a href="https://wa.me/8801609450034" target="_blank">{{ whatsapp_number }}</a></p>
+
+    <div class="card">
+      <form method="post">
+        {% if not session.get('user_id') %}
+          <div class="row">
+            <div>
+              <label>Name</label>
+              <input name="name" required />
+            </div>
+            <div>
+              <label>Phone</label>
+              <input name="phone" required />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>WhatsApp (+880...)</label>
+              <input name="whatsapp" required placeholder="+8801XXXXXXXXX" />
+            </div>
+            <div>
+              <label>Location</label>
+              <input name="location" required />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Current Status</label>
+              <input name="current_status" required placeholder="student / employed / job seeker..." />
+            </div>
+            <div>
+              <label>Education Level</label>
+              <input name="education_level" required placeholder="SSC / HSC / Honours..." />
+            </div>
+          </div>
+        {% endif %}
+
+        <label>Note (optional)</label>
+        <textarea name="note" rows="4" placeholder="Any message..."></textarea>
+
+        <button class="btn btn2" type="submit" style="margin-top:12px;">Submit Application</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

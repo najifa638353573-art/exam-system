@@ -1,0 +1,58 @@
+{% extends "admin/base.html" %}
+{% block content %}
+  <h2>Attempt Detail</h2>
+  <form method="post" action="{{ url_for('admin_delete_attempt', attempt_id=attempt.id) }}" onsubmit="return confirm('Delete attempt? Student can retake.');" style="margin:10px 0;">
+    <button class="btn btn3" type="submit">Delete Attempt</button>
+  </form>
+  <p class="muted">
+    Student: <b>{{ attempt.student_name }}</b> ({{ attempt.phone }})<br/>
+    Subject: <b>{{ attempt.subject_name or '-' }}</b><br/>
+    Exam: <b>{{ attempt.exam_title }}</b> <span class="pill">{{ attempt.label }}</span><br/>
+    Score: <b>{{ attempt.score }}/{{ attempt.total }}</b>
+    {% if attempt.pending_written and attempt.pending_written > 0 %}
+      <span class="tag tagPend" style="margin-left:6px;">Pending {{ attempt.pending_written }}</span>
+    {% endif %}
+    <br/>
+    Submitted: {{ attempt.submitted_at }}
+  </p>
+
+  <hr style="margin:18px 0;"/>
+
+  <h3>Per Question</h3>
+  {% for r in rows %}
+    <div class="q
+      {% if r.q_type == 'text' and r.is_correct is none %}{% else %}
+        {% if r.is_correct %}ok{% else %}bad{% endif %}
+      {% endif %}
+    ">
+      <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+        <div style="font-weight:900;">
+          {% if r.q_no %}Q{{ r.q_no }}.{% else %}Q.{% endif %}
+          {{ r.question }}
+        </div>
+        <div>
+          {% if r.q_type == 'text' and r.is_correct is none %}
+            <span class="tag tagPend">⏳ Pending</span>
+          {% else %}
+            {% if r.is_correct %}
+              <span class="tag tagOk">✅ Correct</span>
+            {% else %}
+              <span class="tag tagBad">❌ Wrong</span>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+
+      {% if r.q_type == 'mcq' %}
+        <div class="muted" style="margin-top:8px;">
+          Chosen: <b>{{ r.chosen_option or "Not answered" }}</b> | Correct: <b>{{ r.correct }}</b>
+        </div>
+      {% else %}
+        <div class="muted" style="margin-top:8px;">
+          Answer: <b>{{ r.text_answer or "Not answered" }}</b><br/>
+          Reference: <b>{{ r.correct_text or "-" }}</b>
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+{% endblock %}

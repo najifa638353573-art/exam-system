@@ -1,0 +1,43 @@
+{% extends "admin/base.html" %}
+{% block content %}
+  <h2>Attempts</h2>
+
+  {% if rows %}
+    <table>
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Subject</th>
+          <th>Exam</th>
+          <th>Submitted</th>
+          <th>Score</th>
+          <th>Written</th>
+          <th>Retake Left</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+          <tr>
+            <td><b>{{ r.student_name }}</b><div class="muted">{{ r.phone }}</div></td>
+            <td class="muted">{{ r.subject_name or '-' }}</td>
+            <td><b>{{ r.exam_title }}</b> <span class="pill">{{ r.label }}</span></td>
+            <td class="muted">{{ r.submitted_at or "-" }}</td>
+            <td>{% if r.score is not none %}<b>{{ r.score }}/{{ r.total }}</b>{% else %}-{% endif %}</td>
+            <td>
+              {% if r.pending_written and r.pending_written > 0 %}
+                <span class="tag tagPend">Pending {{ r.pending_written }}</span>
+              {% else %}
+                <span class="muted">Done</span>
+              {% endif %}
+            </td>
+            <td><b>{{ r.allowed_extra_attempts }}</b></td>
+            <td><a class="btn btn2" href="{{ url_for('admin_attempt_detail', attempt_id=r.id) }}">View</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">No attempts.</p>
+  {% endif %}
+{% endblock %}

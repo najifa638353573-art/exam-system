@@ -1,0 +1,59 @@
+{% extends "admin/base.html" %}
+{% block content %}
+  <h2>Employees</h2>
+
+  <h3>Add Employee</h3>
+  <form method="post">
+    <div class="row">
+      <div>
+        <label>Name</label>
+        <input name="name" required />
+      </div>
+      <div>
+        <label>Email (for login)</label>
+        <input name="email" placeholder="employee@domain.com" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Phone</label>
+        <input name="phone" />
+      </div>
+      <div>
+        <label>Password (for login)</label>
+        <input name="password" type="password" />
+      </div>
+    </div>
+
+    <label>Role</label>
+    <input name="role" placeholder="Monitor / Employee / Staff" />
+    <button class="btn btn2" type="submit" style="margin-top:12px;">Add</button>
+  </form>
+
+  <hr style="margin:18px 0;"/>
+
+  <h3>List</h3>
+  {% if employees %}
+    <table>
+      <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th></th></tr></thead>
+      <tbody>
+        {% for e in employees %}
+          <tr>
+            <td><b>{{ e.name }}</b><div class="muted">{{ e.created_at }}</div></td>
+            <td class="muted">{{ e.email or '-' }}</td>
+            <td class="muted">{{ e.phone or '-' }}</td>
+            <td class="muted">{{ e.role or '-' }}</td>
+            <td>
+              <form method="post" action="{{ url_for('admin_employee_delete', emp_id=e.id) }}" onsubmit="return confirm('Delete employee?');">
+                <button class="btn btn3" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">No employees yet.</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+  <h2>{% if mode=='add' %}Add Subject{% else %}Edit Subject{% endif %}</h2>
+  <form method="post" enctype="multipart/form-data" class="form">
+    <label>Name</label>
+    <input name="name" value="{{ s.name if s else '' }}" required>
+
+    <label>Description</label>
+    <textarea name="description" rows="4" placeholder="Short subject description...">{{ s.description if s and s.description else '' }}</textarea>
+
+    <label>Image (optional)</label>
+    <input type="file" name="image" accept="image/*">
+    {% if s and s.image_path %}
+      <p class="muted">Current image:</p>
+      <img src="{{ url_for('static', filename='uploads/' ~ s.image_path) }}" alt="subject" style="max-width:240px; border-radius:12px;">
+    {% endif %}
+
+    <label style="display:flex; gap:10px; align-items:center;">
+      <input type="checkbox" name="is_active" {% if not s or s.is_active %}checked{% endif %}> Active
+    </label>
+
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn2" type="submit">Save</button>
+      <a class="btn" href="{{ url_for('admin_subjects') }}">Back</a>
+    </div>
+  </form>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends "admin/base.html" %}
+{% block content %}
+  <h2>Student Profile</h2>
+  {% if u.profile_image %}
+    <div style="margin:10px 0;">
+      <img src="{{ url_for('static', filename='uploads/' + u.profile_image) }}" alt="profile" style="width:110px;height:110px;object-fit:cover;border-radius:16px;border:1px solid #e5e7eb;"/>
+    </div>
+  {% endif %}
+
+  <div class="row">
+    <div>
+      <h3 style="margin-top:0;">{{ u.name }}</h3>
+      <div class="muted">Phone: <b>{{ u.phone }}</b></div>
+      <div class="muted">WhatsApp: <b>{{ u.whatsapp }}</b></div>
+      <div class="muted">Subject: <b>{{ u.subject_name or '-' }}</b></div>
+      <div class="muted">Location: <b>{{ u.location }}</b></div>
+      <div class="muted">Current Status: <b>{{ u.current_status }}</b></div>
+      <div class="muted">Education: <b>{{ u.education_level }}</b></div>
+      <div class="muted">Created: {{ u.created_at }}</div>
+      <div style="margin-top:10px;">
+        <span class="pill">status: {{ u.status }}</span>
+        <span class="pill">blocked: {{ "yes" if u.is_blocked else "no" }}</span>
+      </div>
+    </div>
+
+    <div>
+      <h3 style="margin-top:0;">Actions</h3>
+
+      <form method="post" action="{{ url_for('admin_set_subject_batch', user_id=u.id) }}">
+        <label>Subject</label>
+        <select name="subject_id" required>
+          {% for sub in subjects %}
+            <option value="{{ sub.id }}" {% if u.subject_id==sub.id %}selected{% endif %}>{{ sub.name }}</option>
+          {% endfor %}
+        </select>
+
+        <label>Batch (optional)</label>
+        <select name="batch_id">
+          <option value="">(No batch)</option>
+          {% for b in batches %}
+            <option value="{{ b.id }}" {% if u.batch_id==b.id %}selected{% endif %}>{{ b.subject_name }} — {{ b.name }}</option>
+          {% endfor %}
+        </select>
+
+        <button class="btn btn2" type="submit" style="margin-top:10px;">Update Subject/Batch</button>
+      </form>
+
+      <hr style="margin:16px 0;"/>
+
+
+      <form method="post" action="{{ url_for('admin_set_student_status', user_id=u.id) }}">
+        <label>Set Status</label>
+        <select name="status" required>
+          {% for st in statuses %}
+            <option value="{{ st.name }}" {% if u.status==st.name %}selected{% endif %}>{{ st.name }}</option>
+          {% endfor %}
+        </select>
+        <button class="btn btn2" type="submit" style="margin-top:10px;">Update Status</button>
+      </form>
+
+      <form method="post" action="{{ url_for('admin_toggle_block', user_id=u.id) }}" style="margin-top:10px;">
+        {% if u.is_blocked %}
+          <button class="btn btn4" type="submit">Unblock</button>
+        {% else %}
+          <button class="btn btn3" type="submit">Block</button>
+        {% endif %}
+      </form>
+
+      <hr style="margin:16px 0;"/>
+
+      <h3 style="margin:0;">Add Note</h3>
+      <form method="post" action="{{ url_for('admin_add_student_note', user_id=u.id) }}">
+        <textarea name="note" rows="5" placeholder="Write note..."></textarea>
+        <button class="btn btn2" type="submit" style="margin-top:10px;">Save Note</button>
+      </form>
+    </div>
+  </div>
+
+  <hr style="margin:18px 0;"/>
+
+  <h3>Notes</h3>
+  {% if notes %}
+    {% for n in notes %}
+      <div class="q">
+        <div class="muted">{{ n.created_at }}</div>
+        <div style="font-weight:900; white-space:pre-wrap;">{{ n.note }}</div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="muted">No notes yet.</p>
+  {% endif %}
+
+  <hr style="margin:18px 0;"/>
+
+  <h3>Result History</h3>
+  {% if attempts %}
+    <table>
+      <thead><tr><th>Submitted</th><th>Subject</th><th>Exam</th><th>Score</th><th></th></tr></thead>
+      <tbody>
+        {% for a in attempts %}
+          <tr>
+            <td class="muted">{{ a.submitted_at }}</td>
+            <td class="muted">{{ a.subject_name or '-' }}</td>
+            <td><b>{{ a.exam_title }}</b> <span class="pill">{{ a.label }}</span></td>
+            <td>
+              <b>{{ a.score }}/{{ a.total }}</b>
+              {% if a.pending_written and a.pending_written > 0 %}
+                <span class="tag tagPend" style="margin-left:6px;">Pending {{ a.pending_written }}</span>
+              {% endif %}
+            </td>
+            <td style="display:flex; gap:8px; flex-wrap:wrap;">
+              <a class="btn btn2" href="{{ url_for('admin_attempt_detail', attempt_id=a.id) }}">View</a>
+              <form method="post" action="{{ url_for('admin_delete_attempt', attempt_id=a.id) }}" onsubmit="return confirm('Delete attempt? Student can retake.');">
+                <button class="btn btn3" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">No attempts yet.</p>
+  {% endif %}
+{% endblock %}

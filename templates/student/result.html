@@ -1,0 +1,64 @@
+{% extends "student/base.html" %}
+{% block content %}
+  <h2>Result</h2>
+  <p class="muted">
+    Subject: <b>{{ attempt.subject_name or '-' }}</b> •
+    Exam: <b>{{ attempt.title }}</b> <span class="pill">{{ attempt.label }}</span>
+  </p>
+
+  <div class="timerBox">
+    <div>
+      <div class="muted">Score</div>
+      <div style="font-size:20px; font-weight:900;">{{ attempt.score }}/{{ attempt.total }}</div>
+      {% if attempt.pending_written and attempt.pending_written > 0 %}
+        <div class="muted" style="margin-top:4px;">
+          <span class="tag tagPend">Written Pending: {{ attempt.pending_written }}</span>
+        </div>
+      {% endif %}
+    </div>
+    <div class="muted">Submitted: {{ attempt.submitted_at }}</div>
+  </div>
+
+  <a class="btn btn2" href="{{ url_for('dashboard') }}">Back</a>
+
+  <hr style="margin:18px 0;"/>
+
+  <h3>Per Question Review</h3>
+  {% for r in rows %}
+    <div class="q
+      {% if r.q_type == 'text' and r.is_correct is none %}{% else %}
+        {% if r.is_correct %}ok{% else %}bad{% endif %}
+      {% endif %}
+    ">
+      <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+        <div style="font-weight:900;">
+          {% if r.q_no %}Q{{ r.q_no }}.{% else %}Q.{% endif %}
+          {{ r.question }}
+        </div>
+        <div>
+          {% if r.q_type == 'text' and r.is_correct is none %}
+            <span class="tag tagPend">⏳ Pending</span>
+          {% else %}
+            {% if r.is_correct %}
+              <span class="tag tagOk">✅ Correct</span>
+            {% else %}
+              <span class="tag tagBad">❌ Wrong</span>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+
+      {% if r.q_type == 'mcq' %}
+        <div class="muted" style="margin-top:8px;">
+          Your: <b>{{ r.chosen_option or "Not answered" }}</b> |
+          Correct: <b>{{ r.correct }}</b>
+        </div>
+      {% else %}
+        <div class="muted" style="margin-top:8px;">
+          Your: <b>{{ r.text_answer or "Not answered" }}</b><br/>
+          Reference: <b>{{ r.correct_text or "-" }}</b>
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+{% endblock %}

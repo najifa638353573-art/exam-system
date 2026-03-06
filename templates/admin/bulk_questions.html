@@ -1,0 +1,16 @@
+{% extends "admin/base.html" %}
+{% block content %}
+  <h2>Bulk Input — {{ exam.title }}</h2>
+  <p class="muted">MCQ/Quiz bulk paste করে একবারে অনেকগুলো প্রশ্ন add করা যাবে।</p>
+
+  <form method="post">
+    <label>Paste here</label>
+    <textarea name="bulk" rows="18" placeholder="{{ sample|e }}"></textarea>
+    <button class="btn btn2" type="submit" style="margin-top:12px;">Import</button>
+    <a class="btn" href="{{ url_for('admin_questions', exam_id=exam.id) }}" style="margin-top:12px;">Back</a>
+  </form>
+
+  <hr style="margin:18px 0;"/>
+  <h3>Sample Format</h3>
+  <pre style="white-space:pre-wrap; background:#111827; color:#fff; padding:12px; border-radius:12px;">{{ sample }}</pre>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "student/base.html" %}
+{% block content %}
+  <h2>Application</h2>
+  <p class="muted">রেজিস্ট্রেশন না করলেও এখানে আবেদন করা যাবে (No Password)।</p>
+
+  <form method="post">
+    <div class="row">
+      <div>
+        <label>Name</label>
+        <input name="name" required />
+      </div>
+      <div>
+        <label>Phone</label>
+        <input name="phone" required placeholder="01XXXXXXXXX" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>WhatsApp (optional)</label>
+        <input name="whatsapp" placeholder="+8801XXXXXXXXX" />
+      </div>
+      <div>
+        <label>Desired Subject (optional)</label>
+        <select name="desired_subject_id">
+          <option value="">-- Select --</option>
+          {% for s in subjects %}
+            <option value="{{ s.id }}">{{ s.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Location (optional)</label>
+        <input name="location" />
+      </div>
+      <div>
+        <label>Current Status (optional)</label>
+        <input name="current_status" placeholder="Student / Job / Business" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Education Level (optional)</label>
+        <input name="education_level" placeholder="SSC / HSC / Honors" />
+      </div>
+      <div></div>
+    </div>
+
+    <label>Note (optional)</label>
+    <textarea name="note" rows="4"></textarea>
+
+    <button class="btn btn2" type="submit" style="margin-top:12px;">Submit Application</button>
+  </form>
+{% endblock %}

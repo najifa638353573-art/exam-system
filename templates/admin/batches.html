@@ -1,0 +1,30 @@
+{% extends "admin/base.html" %}
+{% block content %}
+  <h2>Batches</h2>
+  <a class="btn btn2" href="{{ url_for('admin_batch_add') }}">Add Batch</a>
+
+  <hr style="margin:18px 0;"/>
+
+  {% if batches %}
+    <table>
+      <thead><tr><th>Subject</th><th>Batch</th><th>Active</th><th></th></tr></thead>
+      <tbody>
+        {% for b in batches %}
+          <tr>
+            <td class="muted">{{ b.subject_name or '-' }}</td>
+            <td><b>{{ b.name }}</b></td>
+            <td>{{ "Yes" if b.is_active else "No" }}</td>
+            <td style="display:flex; gap:8px; flex-wrap:wrap;">
+              <a class="btn btn2" href="{{ url_for('admin_batch_edit', batch_id=b.id) }}">Edit</a>
+              <form method="post" action="{{ url_for('admin_batch_delete', batch_id=b.id) }}" onsubmit="return confirm('Delete batch?');">
+                <button class="btn btn3" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">No batches.</p>
+  {% endif %}
+{% endblock %}

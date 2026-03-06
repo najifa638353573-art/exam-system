@@ -1,0 +1,20 @@
+{% extends "admin/base.html" %}
+{% block content %}
+  <h2>Grant Retake Permission</h2>
+  <form method="post">
+    <label>Student Phone</label>
+    <input name="phone" required placeholder="01XXXXXXXXX" />
+
+    <label>Select Exam</label>
+    <select name="exam_id" required>
+      {% for e in exams %}
+        <option value="{{ e.id }}">{{ e.subject_name or '-' }} — {{ e.title }} ({{ e.label }})</option>
+      {% endfor %}
+    </select>
+
+    <label>Extra Attempts</label>
+    <input name="extra" type="number" min="1" value="1" />
+
+    <button class="btn btn4" type="submit" style="margin-top:12px;">Grant</button>
+  </form>
+{% endblock %}

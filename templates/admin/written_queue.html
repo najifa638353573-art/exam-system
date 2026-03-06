@@ -1,0 +1,54 @@
+{% extends "admin/base.html" %}
+{% block content %}
+  <h2>Written Queue (Pending Review)</h2>
+  <p class="muted">Employee/Admin এখানে written answer দেখে correct/wrong দিবে।</p>
+
+  {% if pending %}
+    {% for p in pending %}
+      <div class="q">
+        <div class="muted">
+          Student: <b>{{ p.student_name }}</b> ({{ p.phone }}) • Exam: <b>{{ p.exam_title }}</b>
+        </div>
+        <div style="font-weight:900; margin-top:6px;">
+          {% if p.q_no %}Q{{ p.q_no }}.{% endif %} {{ p.question }}
+        </div>
+        <div style="margin-top:8px;">
+          <div class="muted">Student Answer</div>
+          <div style="font-weight:900; white-space:pre-wrap;">{{ p.text_answer or "-" }}</div>
+        </div>
+        <div style="margin-top:8px;">
+          <div class="muted">Reference (optional)</div>
+          <div style="white-space:pre-wrap;">{{ p.correct_text or "-" }}</div>
+        </div>
+
+        <form method="post" action="{{ url_for('admin_written_decide', ans_id=p.ans_id) }}" style="margin-top:10px;">
+          <div class="row">
+            <div>
+              <label>Reviewer (Employee optional)</label>
+              <select name="reviewer_employee_id">
+                <option value="">-- none --</option>
+                {% for e in employees %}
+                  <option value="{{ e.id }}">{{ e.name }}{% if e.role %} ({{ e.role }}){% endif %}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label>Decision</label>
+              <select name="decided" required>
+                <option value="1">Correct</option>
+                <option value="0">Wrong</option>
+              </select>
+            </div>
+          </div>
+
+          <label>Note (optional)</label>
+          <textarea name="note" rows="3" placeholder="Any note..."></textarea>
+
+          <button class="btn btn4" type="submit" style="margin-top:10px;">Submit Review</button>
+        </form>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="muted">No pending written answers 🎉</p>
+  {% endif %}
+{% endblock %}

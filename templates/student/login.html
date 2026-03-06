@@ -1,0 +1,12 @@
+{% extends "student/base.html" %}
+{% block content %}
+  <h2>Student Login</h2>
+  <p class="muted">Registration approved হলে এখানে লগইন করা যাবে।</p>
+  <form method="post">
+    <label>Username (Phone / Admin / Employee Email)</label>
+        <input name="username" required />
+    <label>Password</label>
+    <input type="password" name="password" required />
+    <button class="btn btn2" type="submit" style="margin-top:12px;">Login</button>
+  </form>
+{% endblock %}

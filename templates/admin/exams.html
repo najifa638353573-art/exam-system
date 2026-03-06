@@ -1,0 +1,44 @@
+{% extends "admin/base.html" %}
+{% block content %}
+  <h2>Exams</h2>
+  <a class="btn btn2" href="{{ url_for('admin_exam_add') }}">Add Exam</a>
+
+  <hr style="margin:18px 0;"/>
+
+  {% if exams %}
+    <table>
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Batch</th>
+          <th>Exam</th>
+          <th>Panel</th>
+          <th>Duration</th>
+          <th>Active</th>
+          <th>Manage</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in exams %}
+          <tr>
+            <td class="muted">{{ e.subject_name or '-' }}</td>
+            <td class="muted">{{ e.batch_name or 'ALL' }}</td>
+            <td><b>{{ e.title }}</b></td>
+            <td><span class="pill">{{ e.label }}</span></td>
+            <td>{{ e.duration_minutes }} min</td>
+            <td>{{ "Yes" if e.is_active else "No" }}</td>
+            <td style="display:flex; gap:8px; flex-wrap:wrap;">
+              <a class="btn" href="{{ url_for('admin_questions', exam_id=e.id) }}">Questions</a>
+              <a class="btn btn2" href="{{ url_for('admin_exam_edit', exam_id=e.id) }}">Edit</a>
+              <form method="post" action="{{ url_for('admin_exam_delete', exam_id=e.id) }}" onsubmit="return confirm('Delete exam?');">
+                <button class="btn btn3" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">No exams.</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "student/base.html" %}
+{% block head %}
+  <script src="{{ url_for('static', filename='timer.js') }}"></script>
+{% endblock %}
+{% block content %}
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;">
+    <div>
+      <h2 style="margin:0;">{{ exam.title }}</h2>
+      <div class="muted">
+        Subject: <b>{{ exam.subject_name or '-' }}</b> •
+        Panel: <span class="pill">{{ exam.label }}</span> • Duration: {{ exam.duration_minutes }} min
+      </div>
+    </div>
+    <div class="timerBox" style="min-width:220px;">
+      <div class="muted">Time Left</div>
+      <div class="timer" id="timer">--:--</div>
+    </div>
+  </div>
+
+  <form id="examForm" method="post" action="{{ url_for('submit_exam', attempt_id=attempt_id) }}">
+    {% for q in questions %}
+      <div class="q">
+        <div style="font-weight:900;">
+          {% if q.q_no %}Q{{ q.q_no }}.{% else %}Q.{% endif %}
+          {{ q.question }}
+          {% if q.q_type == 'text' %}
+            <span class="pill" style="margin-left:8px;">Written</span>
+          {% endif %}
+        </div>
+
+        {% if q.q_type == 'mcq' %}
+          <label class="opt"><input type="radio" name="q_{{ q.id }}" value="A" required> A) {{ q.opt_a }}</label>
+          <label class="opt"><input type="radio" name="q_{{ q.id }}" value="B"> B) {{ q.opt_b }}</label>
+          <label class="opt"><input type="radio" name="q_{{ q.id }}" value="C"> C) {{ q.opt_c }}</label>
+          <label class="opt"><input type="radio" name="q_{{ q.id }}" value="D"> D) {{ q.opt_d }}</label>
+        {% else %}
+          <label>Your Answer (typing)</label>
+          <textarea name="q_{{ q.id }}_text" rows="3" required placeholder="Type your answer..."></textarea>
+          <div class="muted" style="margin-top:6px;">এই Written question এর ফল Pending থাকবে—Employee/Admin পরে review করবে।</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <button class="btn btn2" type="submit">Submit</button>
+    <div class="muted" style="margin-top:8px;">সময় 0 হলে অটো সাবমিট হবে।</div>
+  </form>
+
+  <script>
+    startTimer({{ remaining_seconds }});
+  </script>
+{% endblock %}

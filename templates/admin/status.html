@@ -1,0 +1,36 @@
+{% extends "admin/base.html" %}
+{% block content %}
+  <h2>Student Status Options</h2>
+  <p class="muted">এখান থেকে নতুন status add করা যাবে। (active/off)</p>
+
+  <form method="post" style="max-width:520px;">
+    <label>New Status Name</label>
+    <input name="name" placeholder="e.g., admitted / inactive / hold" />
+    <button class="btn btn2" type="submit" style="margin-top:10px;">Add</button>
+  </form>
+
+  <hr style="margin:18px 0;"/>
+
+  {% if statuses %}
+    <table>
+      <thead><tr><th>Status</th><th>Active</th><th></th></tr></thead>
+      <tbody>
+        {% for s in statuses %}
+          <tr>
+            <td><b>{{ s.name }}</b></td>
+            <td>{{ "Yes" if s.is_active else "No" }}</td>
+            <td>
+              <form method="post" action="{{ url_for('admin_status_toggle', status_id=s.id) }}">
+                <button class="btn {% if s.is_active %}btn3{% else %}btn4{% endif %}" type="submit">
+                  {% if s.is_active %}Deactivate{% else %}Activate{% endif %}
+                </button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">No statuses.</p>
+  {% endif %}
+{% endblock %}

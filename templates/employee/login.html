@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ site_name }} — Employee Login</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f6f7fb; margin:0; }
+    .wrap { max-width: 520px; margin: 60px auto; padding: 18px; }
+    .card { background:#fff; padding: 18px; border-radius: 14px; box-shadow: 0 8px 22px rgba(0,0,0,.06); }
+    label { font-weight:700; display:block; margin: 10px 0 6px; }
+    input { width:100%; padding:12px; border-radius:10px; border:1px solid #e5e7eb; box-sizing:border-box; font-size:16px;}
+    button { width:100%; padding:12px; border-radius:10px; border:0; background:#111827; color:#fff; font-weight:900; cursor:pointer; margin-top:12px; font-size:16px;}
+    .flash { margin: 10px 0; padding: 10px 12px; border-radius: 10px; }
+    .success { background:#ecfdf5; border:1px solid #10b98133; }
+    .danger { background:#fef2f2; border:1px solid #ef444433; }
+    .warning { background:#fffbeb; border:1px solid #f59e0b33; }
+    a { color:#2563eb; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for cat, msg in messages %}
+          <div class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="card">
+      <h2>Employee Login</h2>
+      <form method="post">
+        <label>Email</label>
+        <input name="email" required />
+        <label>Password</label>
+        <input type="password" name="password" required />
+        <button type="submit">Login</button>
+      </form>
+      <p style="margin-top:10px;"><a href="{{ url_for('home') }}">Back to Student Home</a></p>
+    </div>
+  </div>
+</body>
+</html>

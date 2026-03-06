@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{{ site_name }} — {{ c.title }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <a class="brand" href="{{ url_for('courses') }}"><img src="{{ url_for('static', filename='logo.png') }}" alt="logo"/>← Courses</a>
+      <a class="btn" href="{{ url_for('subjects_page') }}">Subjects</a>
+    </div>
+
+    <div class="card">
+      {% if c.image_filename %}
+        <img src="{{ url_for('static', filename='uploads/' + c.image_filename) }}" alt="course" style="width:100%; max-height:320px; object-fit:cover; border-radius:14px;"/>
+      {% endif %}
+      <h2 style="margin-bottom:6px;">{{ c.title }}</h2>
+      <div class="muted">Subject: <b>{{ c.subject_name or "-" }}</b></div>
+      <p style="margin-top:10px;">{{ c.description or "" }}</p>
+      <div style="white-space:pre-wrap;">{{ c.details or "" }}</div>
+
+      <hr style="margin:16px 0;"/>
+      <p class="muted">
+        Apply/Contact: WhatsApp <a href="https://wa.me/8801609450034" target="_blank">{{ whatsapp_number }}</a>
+        • Telegram <a href="{{ telegram_url }}" target="_blank">{{ telegram_url }}</a>
+      </p>
+      <a class="btn btn2" href="{{ url_for('apply_subject', subject_id=c.subject_id) }}">Apply for this Subject</a>
+    </div>
+  </div>
+</body>
+</html>

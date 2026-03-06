@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ site_name }} — Employee Written Queue</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f6f7fb; margin:0; }
+    .wrap { max-width: 1100px; margin: 18px auto; padding: 18px; }
+    .card { background:#fff; padding: 18px; border-radius: 14px; box-shadow: 0 8px 22px rgba(0,0,0,.06); }
+    .muted { color:#6b7280; font-size: 14px; }
+    .q { margin: 14px 0; padding: 14px; border: 1px solid #e5e7eb; border-radius: 12px; background:#fff; }
+    textarea, select { width:100%; padding:10px; border-radius:10px; border:1px solid #e5e7eb; box-sizing:border-box;}
+    label { font-weight: 700; display:block; margin: 10px 0 6px; }
+    a.btn, button.btn { display:inline-block; padding: 10px 14px; border-radius: 10px; border: 0; text-decoration:none; background:#111827; color:#fff; cursor:pointer; }
+    .btn4 { background:#059669; }
+    .flash { margin: 10px 0; padding: 10px 12px; border-radius: 10px; }
+    .success { background:#ecfdf5; border:1px solid #10b98133; }
+    .danger { background:#fef2f2; border:1px solid #ef444433; }
+    .warning { background:#fffbeb; border:1px solid #f59e0b33; }
+    .row { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 720px) { .row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for cat, msg in messages %}
+          <div class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+        <div>
+          <h2 style="margin:0;">Written Queue</h2>
+          <div class="muted">Logged in: <b>{{ session.get('employee_name') }}</b></div>
+        </div>
+        <a class="btn" href="{{ url_for('employee_logout') }}">Logout</a>
+      </div>
+
+      <hr style="margin:18px 0;"/>
+
+      {% if pending %}
+        {% for p in pending %}
+          <div class="q">
+            <div class="muted">
+              Student: <b>{{ p.student_name }}</b> ({{ p.phone }}) • Exam: <b>{{ p.exam_title }}</b>
+            </div>
+            <div style="font-weight:900; margin-top:6px;">
+              {% if p.q_no %}Q{{ p.q_no }}.{% endif %} {{ p.question }}
+            </div>
+
+            <div style="margin-top:8px;">
+              <div class="muted">Student Answer</div>
+              <div style="font-weight:900; white-space:pre-wrap;">{{ p.text_answer or "-" }}</div>
+            </div>
+
+            <div style="margin-top:8px;">
+              <div class="muted">Reference (optional)</div>
+              <div style="white-space:pre-wrap;">{{ p.correct_text or "-" }}</div>
+            </div>
+
+            <form method="post" action="{{ url_for('employee_written_decide', ans_id=p.ans_id) }}" style="margin-top:10px;">
+              <div class="row">
+                <div>
+                  <label>Decision</label>
+                  <select name="decided" required>
+                    <option value="1">Correct</option>
+                    <option value="0">Wrong</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Note (optional)</label>
+                  <textarea name="note" rows="2" placeholder="Any note..."></textarea>
+                </div>
+              </div>
+              <button class="btn btn4" type="submit" style="margin-top:10px;">Submit Review</button>
+            </form>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="muted">No pending written answers 🎉</p>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

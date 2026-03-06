@@ -1,0 +1,81 @@
+{% extends "student/base.html" %}
+{% block content %}
+  <h2>Dashboard</h2>
+  <p class="muted">
+    Welcome, <b>{{ user.name }}</b><br/>
+    Subject: <b>{{ user.subject_name or '-' }}</b><br/>
+    Status: <span class="pill">{{ user.status }}</span>
+  </p>
+
+  {% if not can_view_exams %}
+    <div class="flash warning">
+      আপনার status <b>approved</b> না হওয়া পর্যন্ত Exam দেখা/দেওয়া যাবে না।
+    </div>
+  {% else %}
+    <h3>My Active Exams (Subject Wise)</h3>
+    {% if exams %}
+      <table>
+        <thead>
+          <tr>
+            <th>Exam</th>
+            <th>Panel</th>
+            <th>Time</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in exams %}
+            <tr>
+              <td><b>{{ e.title }}</b>{% if e.batch_id %}<div class="muted">Batch specific</div>{% endif %}</td>
+              <td><span class="pill">{{ e.label }}</span></td>
+              <td>{{ e.duration_minutes }} min</td>
+              <td>
+                <form method="post" action="{{ url_for('start_exam', exam_id=e.id) }}">
+                  <button class="btn btn2" type="submit">Start / Continue</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="muted">এই Subject এ এখন কোনো Active exam নেই।</p>
+    {% endif %}
+  {% endif %}
+
+  <hr style="margin:18px 0;"/>
+
+  <h3>My Activity (Result History)</h3>
+  {% if attempts %}
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Exam</th>
+          <th>Score</th>
+          <th>Written</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in attempts %}
+          <tr>
+            <td class="muted">{{ a.submitted_at }}</td>
+            <td><b>{{ a.title }}</b> <span class="pill">{{ a.label }}</span></td>
+            <td><b>{{ a.score }}/{{ a.total }}</b></td>
+            <td>
+              {% if a.pending_written and a.pending_written > 0 %}
+                <span class="tag tagPend">Pending {{ a.pending_written }}</span>
+              {% else %}
+                <span class="muted">Done</span>
+              {% endif %}
+            </td>
+            <td><a class="btn" href="{{ url_for('result', attempt_id=a.id) }}">View</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">No results yet.</p>
+  {% endif %}
+{% endblock %}

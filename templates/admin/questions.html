@@ -1,0 +1,52 @@
+{% extends "admin/base.html" %}
+{% block content %}
+  <h2>Questions</h2>
+  <p class="muted">
+    Subject: <b>{{ exam.subject_name or '-' }}</b> •
+    Exam: <b>{{ exam.title }}</b> <span class="pill">{{ exam.label }}</span>
+  </p>
+
+  <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+    <a class="btn btn2" href="{{ url_for('admin_question_add', exam_id=exam.id) }}">Add Question</a>
+    <a class="btn btn2" href="{{ url_for('admin_bulk_questions', exam_id=exam.id) }}">Bulk Upload</a>
+    <a class="btn" href="{{ url_for('admin_exams') }}">Back to Exams</a>
+  </div>
+
+  {% if questions %}
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Type</th>
+          <th>Question</th>
+          <th>Correct/Ref</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for q in questions %}
+          <tr>
+            <td>{{ q.q_no or q.id }}</td>
+            <td><span class="pill">{{ "written" if q.q_type=="text" else "mcq" }}</span></td>
+            <td>{{ q.question }}</td>
+            <td>
+              {% if q.q_type=='mcq' %}
+                <b>{{ q.correct }}</b>
+              {% else %}
+                <span class="muted">{{ q.correct_text or '-' }}</span>
+              {% endif %}
+            </td>
+            <td style="display:flex; gap:8px; flex-wrap:wrap;">
+              <a class="btn btn2" href="{{ url_for('admin_question_edit', q_id=q.id) }}">Edit</a>
+              <form method="post" action="{{ url_for('admin_question_delete', q_id=q.id) }}" onsubmit="return confirm('Delete question?');">
+                <button class="btn btn3" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">No questions yet.</p>
+  {% endif %}
+{% endblock %}

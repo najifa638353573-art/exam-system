@@ -1,0 +1,145 @@
+{% extends "admin/base.html" %}
+{% block head %}
+<script>
+  async function postJSON(url, data){
+    const r = await fetch(url, {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(data)});
+    const j = await r.json().catch(()=>({ok:false}));
+    if(!r.ok || !j.ok){
+      alert("Save failed: " + (j.error || r.status));
+    }
+  }
+  function copyText(t){
+    navigator.clipboard.writeText(t).then(()=>alert("Copied: " + t));
+  }
+  function filterBatches(rowId){
+    const sid = document.getElementById('sub_'+rowId).value;
+    const sel = document.getElementById('bat_'+rowId);
+    const opts = sel.querySelectorAll('option[data-subject]');
+    opts.forEach(o=>{
+      const ok = (o.value === "") || (o.getAttribute('data-subject') === sid);
+      o.style.display = ok ? 'block' : 'none';
+    });
+  }
+</script>
+{% endblock %}
+{% block content %}
+  <h2>Students</h2>
+
+  <div class="card" style="margin:12px 0;">
+    <div class="row">
+      <div>
+        <label>Filter Subject</label>
+        <select id="filter_subject" onchange="applyFilters()">
+          <option value="">All</option>
+          {% for sub in subjects %}
+            <option value="{{ sub.id }}">{{ sub.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label>Filter Batch</label>
+        <select id="filter_batch" onchange="applyFilters()">
+          <option value="">All</option>
+          {% for b in batches %}
+            <option value="{{ b.id }}">{{ b.subject_name }} — {{ b.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function applyFilters(){
+    const fs = document.getElementById("filter_subject").value;
+    const fb = document.getElementById("filter_batch").value;
+    document.querySelectorAll("tbody tr").forEach(tr=>{
+      const sid = tr.getAttribute("data-subject");
+      const bid = tr.getAttribute("data-batch");
+      const okS = !fs || sid === fs;
+      const okB = !fb || bid === fb;
+      tr.style.display = (okS && okB) ? "" : "none";
+    });
+  }
+</script>
+
+  <p class="muted">Dropdown change করলেই auto-save হবে (no manual save button).</p>
+
+  {% if students %}
+    <table>
+      <thead>
+          <tr>
+          <th>Student</th>
+          <th>Phone / WhatsApp</th>
+          <th>Status</th>
+          <th>Subject</th>
+          <th>Batch</th>
+          <th>Blocked</th>
+          <th>View</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in students %}
+          <tr>
+            <td>
+              <b>{{ s.name }}</b>
+              <div class="muted">{{ s.created_at }}</div>
+            </td>
+
+            <td class="muted">
+              Phone: {{ s.phone }}
+              <button class="btn" type="button" style="padding:4px 8px; margin-left:6px;" onclick="copyText('{{ s.phone }}')">Copy</button>
+              <br/>
+              WA: {{ s.whatsapp }}
+              <button class="btn" type="button" style="padding:4px 8px; margin-left:6px;" onclick="copyText('{{ s.whatsapp }}')">Copy</button>
+            </td>
+
+            <td>
+              <select onchange="postJSON('{{ url_for('admin_api_set_status', user_id=s.id) }}', {status:this.value})">
+                {% for st in statuses %}
+                  <option value="{{ st.name }}" {% if s.status==st.name %}selected{% endif %}>{{ st.name }}</option>
+                {% endfor %}
+              </select>
+            </td>
+
+            <td>
+              <select id="sub_{{ s.id }}" onchange="filterBatches('{{ s.id }}'); postJSON('{{ url_for('admin_api_set_subject_batch', user_id=s.id) }}', {subject_id:this.value, batch_id: document.getElementById('bat_{{ s.id }}').value})">
+                {% for sub in subjects %}
+                  <option value="{{ sub.id }}" {% if s.subject_id==sub.id %}selected{% endif %}>{{ sub.name }}</option>
+                {% endfor %}
+              </select>
+            </td>
+
+            <td>
+              <select id="bat_{{ s.id }}" onchange="postJSON('{{ url_for('admin_api_set_subject_batch', user_id=s.id) }}', {subject_id: document.getElementById('sub_{{ s.id }}').value, batch_id:this.value})">
+                <option value="">(No batch)</option>
+                {% for b in batches %}
+                  <option value="{{ b.id }}" data-subject="{{ b.subject_id }}" {% if s.batch_id==b.id %}selected{% endif %}>
+                    {{ b.subject_name }} — {{ b.name }}
+                  </option>
+                {% endfor %}
+              </select>
+              <script>filterBatches('{{ s.id }}');</script>
+            </td>
+
+            <td>
+              <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                <b>{{ "Yes" if s.is_blocked else "No" }}</b>
+                <form method="post" action="{{ url_for('admin_toggle_block', user_id=s.id) }}">
+                  {% if s.is_blocked %}
+                    <button class="btn btn4" type="submit">Unblock</button>
+                  {% else %}
+                    <button class="btn btn3" type="submit">Block</button>
+                  {% endif %}
+                </form>
+              </div>
+            </td>
+
+            <td><a class="btn" title="View" href="{{ url_for('admin_student_profile', user_id=s.id) }}">👁️</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">No students.</p>
+  {% endif %}
+{% endblock %}

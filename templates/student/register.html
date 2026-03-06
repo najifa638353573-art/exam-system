@@ -1,0 +1,81 @@
+{% extends "student/base.html" %}
+{% block content %}
+  <h2>Registration (Goes to Application)</h2>
+  <p class="muted">সব ফিল্ড বাধ্যতামূলক। WhatsApp অবশ্যই <b>+880</b> দিয়ে শুরু হবে।</p>
+
+  <form method="post">
+    <div class="row">
+      <div>
+        <label>Name</label>
+        <input name="name" required />
+      </div>
+      <div>
+        <label>Phone (01XXXXXXXXX)</label>
+        <input name="phone" required placeholder="01XXXXXXXXX" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>WhatsApp (must, +8801XXXXXXXXX)</label>
+        <input name="whatsapp" required placeholder="+8801XXXXXXXXX" />
+      </div>
+      <div>
+        <label>Subject (must)</label>
+        <select name="subject_id" required>
+          <option value="">-- Select Subject --</option>
+          {% for s in subjects %}
+            <option value="{{ s.id }}">{{ s.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Current Status (must)</label>
+        <select name="current_status" required>
+          <option value="">-- Select --</option>
+          <option>Job Running</option>
+          <option>Job Seeker</option>
+          <option>Student</option>
+          <option>Housewife</option>
+          <option>Employed</option>
+          <option>Business</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div>
+        <label>Education Level (must)</label>
+        <select name="education_level" required>
+          <option value="">-- Select --</option>
+          <option>PSC</option>
+          <option>JSC</option>
+          <option>SSC</option>
+          <option>HSC</option>
+          <option>Diploma</option>
+          <option>Honours</option>
+          <option>BA</option>
+          <option>BSc</option>
+          <option>MBA</option>
+          <option>MA</option>
+          <option>MSc</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Location (must)</label>
+        <input name="location" required placeholder="e.g., Dhaka" />
+      </div>
+      <div>
+        <label>Password (must)</label>
+        <input type="password" name="password" required />
+      </div>
+    </div>
+
+    <button class="btn btn2" type="submit" style="margin-top:12px;">Submit for Approval</button>
+  </form>
+{% endblock %}

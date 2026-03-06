@@ -1,0 +1,73 @@
+{% extends "admin/base.html" %}
+{% block head %}
+<script>
+  function toggleQ(){
+    const t = document.getElementById("q_type").value;
+    const mcq = document.getElementById("mcqBox");
+    const wr = document.getElementById("wrBox");
+    mcq.style.display = (t==="mcq") ? "block" : "none";
+    wr.style.display = (t==="written") ? "block" : "none";
+  }
+  window.addEventListener("load", toggleQ);
+</script>
+{% endblock %}
+{% block content %}
+  <h2>{% if mode=='add' %}Add Question{% else %}Edit Question{% endif %}</h2>
+  <p class="muted">
+    Subject: <b>{{ exam.subject_name or '-' }}</b> •
+    Exam: <b>{{ exam.title }}</b> <span class="pill">{{ exam.label }}</span>
+  </p>
+
+  <form method="post">
+    <label>Question No (optional)</label>
+    <input name="q_no" value="{{ q.q_no if q else '' }}" placeholder="30" />
+
+    <label>Question Type</label>
+    {% set t = ('written' if (q and q.q_type=='text') else 'mcq') %}
+    <select name="q_type" id="q_type" onchange="toggleQ()">
+      <option value="mcq" {% if t=='mcq' %}selected{% endif %}>MCQ</option>
+      <option value="written" {% if t=='written' %}selected{% endif %}>Written (Typing)</option>
+    </select>
+
+    <label>Question</label>
+    <input name="question" required value="{{ q.question if q else '' }}" />
+
+    <hr style="margin:14px 0;"/>
+
+    <div id="mcqBox">
+    <h3 style="margin:0 0 8px 0;">MCQ Fields</h3>
+    <div class="muted">MCQ হলে নিচেরগুলো পূরণ করো।</div>
+    <label>Option A</label>
+    <input name="opt_a" value="{{ q.opt_a if q else '' }}" />
+    <label>Option B</label>
+    <input name="opt_b" value="{{ q.opt_b if q else '' }}" />
+    <label>Option C</label>
+    <input name="opt_c" value="{{ q.opt_c if q else '' }}" />
+    <label>Option D</label>
+    <input name="opt_d" value="{{ q.opt_d if q else '' }}" />
+
+    <label>Correct (A/B/C/D)</label>
+    {% set cur = (q.correct if q else 'A') %}
+    <select name="correct">
+      <option value="A" {% if cur=='A' %}selected{% endif %}>A</option>
+      <option value="B" {% if cur=='B' %}selected{% endif %}>B</option>
+      <option value="C" {% if cur=='C' %}selected{% endif %}>C</option>
+      <option value="D" {% if cur=='D' %}selected{% endif %}>D</option>
+    </select>
+
+    </div>
+
+    <hr style="margin:14px 0;"/>
+
+    <div id="wrBox">
+    <h3 style="margin:0 0 8px 0;">Written Reference (optional)</h3>
+    <div class="muted">Written হলে reference answer লিখতে পারো (optional)। Review employee/admin করবে।</div>
+    <label>Reference Text</label>
+    <input name="correct_text" value="{{ q.correct_text if q else '' }}" placeholder="e.g., Microsoft Corporation" />
+
+    </div>
+
+    <button class="btn btn2" type="submit" style="margin-top:12px;">Save</button>
+    <a class="btn" href="{{ url_for('admin_questions', exam_id=exam.id) }}">Back</a>
+  </form>
+{% endblock %}

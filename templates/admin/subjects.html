@@ -1,0 +1,29 @@
+{% extends "admin/base.html" %}
+{% block content %}
+  <h2>Subjects</h2>
+  <a class="btn btn2" href="{{ url_for('admin_subject_add') }}">Add Subject</a>
+
+  <hr style="margin:18px 0;"/>
+
+  {% if subjects %}
+    <table>
+      <thead><tr><th>Name</th><th>Active</th><th></th></tr></thead>
+      <tbody>
+        {% for s in subjects %}
+          <tr>
+            <td><b>{{ s.name }}</b></td>
+            <td>{{ "Yes" if s.is_active else "No" }}</td>
+            <td style="display:flex; gap:8px; flex-wrap:wrap;">
+              <a class="btn btn2" href="{{ url_for('admin_subject_edit', subject_id=s.id) }}">Edit</a>
+              <form method="post" action="{{ url_for('admin_subject_delete', subject_id=s.id) }}" onsubmit="return confirm('Delete subject?');">
+                <button class="btn btn3" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">No subjects.</p>
+  {% endif %}
+{% endblock %}
