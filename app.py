@@ -27,8 +27,8 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-change-me")
 
 SITE_NAME = "SH TECH ZONE"
-ADMIN_USERNAME = os.environ.get("ADMIN_USER", "admin")
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASS", "admin123")
+ADMIN_USERNAME = os.environ.get("ADMIN_USER", "Shamshed")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASS", "Shamshed123")
 FACEBOOK_URL = "https://www.facebook.com/SH.TECH.ZONE/"
 WHATSAPP_NUMBER = "+8801609450034"
 TELEGRAM_URL = "https://t.me/MR_Expart_SH"
